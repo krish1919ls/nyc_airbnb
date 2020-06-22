@@ -1,0 +1,12 @@
+name: predict_rate
+title: predict_rate
+username:
+account: phxlumens
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2490092
+bundleId: 3303522
+url: https://phxlumens.shinyapps.io/predict_rate/
+when: 1592856889.66834
+asMultiple: FALSE
+asStatic: FALSE

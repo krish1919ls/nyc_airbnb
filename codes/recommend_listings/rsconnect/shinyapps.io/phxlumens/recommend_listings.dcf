@@ -1,0 +1,12 @@
+name: recommend_listings
+title: recommend_listings
+username:
+account: phxlumens
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2490118
+bundleId: 3303546
+url: https://phxlumens.shinyapps.io/recommend_listings/
+when: 1592857359.21352
+asMultiple: FALSE
+asStatic: FALSE

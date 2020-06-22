@@ -1,0 +1,79 @@
+---
+title: 'Data Cleaning: Decoding Airbnb in The Big Apple'
+author: 'Sai Krishna Lanka'
+date: '6/22/2020'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{r load libraries}
+library(readr)
+library(dplyr)
+```
+
+```{r listing dataframe}
+listing.df <- read_csv('../download_data/listings.csv', col_types = cols())
+
+listing.fields <- c('id', 'listing_url', 'host_since', 'neighbourhood_cleansed', 
+                    'neighbourhood_group_cleansed', 'latitude', 'longitude', 'property_type', 'room_type', 
+                    'bedrooms', 'bathrooms', 'guests_included', 'price', 'review_scores_rating')
+listing.df <- listing.df[listing.fields]
+
+
+listing.df$id <- as.integer(listing.df$id)
+listing.df$listing_url <- as.character(listing.df$listing_url)
+listing.df$host_since <- as.Date(listing.df$host_since, format = '%Y-%m-%d')
+listing.df$longitude <- as.numeric(listing.df$longitude)
+listing.df$latitude <- as.numeric(listing.df$latitude)
+listing.df$neighbourhood_cleansed <- as.factor(listing.df$neighbourhood_cleansed)
+listing.df$neighbourhood_group_cleansed <- as.factor(listing.df$neighbourhood_group_cleansed)
+listing.df$property_type <- as.factor(listing.df$property_type)
+listing.df$room_type <- as.factor(listing.df$room_type)
+listing.df$bedrooms <- as.integer(listing.df$bedrooms)
+listing.df$bathrooms <- as.numeric(listing.df$bathrooms)
+listing.df$guests_included <- as.integer(gsub('[^0-9.]', '', as.character(listing.df$guests_included)))
+listing.df$price <- as.numeric(gsub('[^0-9.]', '', as.character(listing.df$price)))
+listing.df$review_scores_rating <- as.numeric(gsub('[^0-9.]', '', 
+                                                   as.character(listing.df$review_scores_rating)))
+
+write_csv(listing.df, '../data/listings_clean.csv', na = 'NA', append = FALSE, col_names = TRUE,
+          quote_escape = 'double')
+
+write_csv(listing.df, './predict_rate/app_data/listings_clean.csv', na = 'NA', append = FALSE, 
+          col_names = TRUE, quote_escape = 'double')
+
+write_csv(listing.df, './recommend_listings/app_data/listings_clean.csv', na = 'NA', append = FALSE, 
+          col_names = TRUE, quote_escape = 'double')
+```
+
+```{r calendar dataframe}
+calendar.df <- read_csv('../download_data/calendar.csv', col_types = cols())
+
+calendar.fields <- c('listing_id', 'date', 'adjusted_price')
+calendar.df <- calendar.df[calendar.fields]
+
+calendar.df$listing_id <- as.integer(calendar.df$listing_id)
+calendar.df$date <- as.Date(calendar.df$date, format = '%Y-%m-%d')
+calendar.df$adjusted_price <- as.numeric(gsub('[^0-9.]', '', as.character(calendar.df$adjusted_price)))
+
+calendar.df <- calendar.df[which(calendar.df$date >= '2020-05-15' & calendar.df$date <= '2020-06-15'), ]
+
+write_csv(calendar.df, '../data/calendar_clean.csv', na = 'NA', append = FALSE, col_names = TRUE,
+          quote_escape = 'double')
+```
+
+```{r reviews dataframe}
+review.df <- read_csv('../download_data/reviews.csv', col_types = cols())
+
+review.fields <- c('listing_id', 'comments')
+review.df <- review.df[review.fields]
+
+review.df <- review.df %>% 
+  inner_join(listing.df[, c('id', 'review_scores_rating')], by = c('listing_id' = 'id')) %>%
+  filter(review_scores_rating <= 50)
+
+write_csv(review.df, '../data/reviews_clean.csv', na = 'NA', append = FALSE, col_names = TRUE,
+          quote_escape = 'double')
+```
