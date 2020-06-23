@@ -497,7 +497,7 @@ rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% 
 
 Below is the user interface for hosts to input parameters for suggesting the price and 95% prediction interval at which they can register his/her listing.<br/><br/>
 <iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' height = 500px width = 850px />
-    
+
 ### What are the pain points that a guest finds in Airbnb?
 It is imperative for hosts to understand the customer expectations. Since most of Airbnb hosts are a part of informal sector in hospitality industry, it is important for them to provide service which is on par with those of formal sector. Reviews provide a feedback to the hosts on how the stay was and what can be improved, if necessary. Text analytics on the reviews of listings with poor ratings (i.e., ratings less than 50%) would provide crucial insights about bad customer experience.<br/>
 The bar plot shows that customers tend to give high ratings because people generally like to say good things. But bad rating means that there are some major issues with the Airbnb rental. Around 300 listings have net ratings less than 50%.
@@ -553,13 +553,11 @@ wordcloud(words = names(words), freq = words, min.freq = 1, max.words = 200,
 As a customer, one would like to get recommendations for their given budget and other constraints such as number of bedrooms and number of guests included.<br/>
 To proceed with this analysis, top 100 locations are selected which are in close proximity to the neighbourhood centres that the user has selected. Then they are ranked according to the Euclidean distances calculated on the three scaled parameters, namely – # of bedrooms, # of guests included and rate of the listing per day. Standardization is done to make sure that the data is internally consistent i.e., each variable has equal dominating effect in recommending the output. Caution is observed while using the rate variable. Euclidean distances are calculated on the log-transformed rate that are per single guest i.e., entire rate is divided with number of guests that were included in the listing record and then it is log-transformed. Top 10 records are then recommended to the customer.<br/>
 Below is the user interface for the customer to choose parameters and to see the suggestions graphically on a map. The larger the size of the bubble, the better the match. The dataset contains the detailed information about the recommended listings with decreasing order of priority.<br/><br/>
-<iframe src = 'https://phxlumens.shinyapps.io/recommend_listing/' height = 970px width = 850px />
-    
-    
+<iframe src = 'https://phxlumens.shinyapps.io/recommend_listings/' height = 970px width = 850px />
+
 ## Conclusion
 The massive dataset has a lot of insights to offer. What has been presented in this report is tip of an iceberg. The dataset provided key insights into how Airbnb grew in New York City, especially in the boroughs of Manhattan and Brooklyn. The rental landscape painted the same picture as the real estate setting of New York. Insights into various listing attributes led to the development of a multiple linear regression model that help hosts to list their new properties for a suitable price range. Text analytics on the reviews of low rated listings has suggested that customers hate when the hosts do not honour their commitment and cancel reservations. For customers, top 10 Airbnb rental recommendations were suggested based on their constraints. However, during these testing times the hospitality sector is badly hit. For hosts who occasionally rent out their spare room in the style of a real bed & breakfast, the lost Airbnb income due the Covid-19 is a frustration.  
-    
-    
+
 ## References
 * [Get the Data](http://insideairbnb.com/get-the-data.html){target="_blank"}
 * [About Us](https://press.airbnb.com/en-us/about-us/){target="_blank"}
