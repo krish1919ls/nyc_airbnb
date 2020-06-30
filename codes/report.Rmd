@@ -17,6 +17,8 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
 
 <style>body {text-align: justify}</style>
 
+[Github Repo](https://github.com/krish1919ls/nyc_airbnb){target="_blank"}
+
 ## Introduction
 Airbnb has been one of the most successful companies since its inception in 2008. According to Airbnb Newsrooms, currently Airbnb has more than 7 million listings in more than 191 countries and regions and operating in more than 100,000 cities. As one of the most popular cities in the world, New York City has been one of the hottest markets for Airbnb. With close to 50,000 listings in the city, Airbnb has interwoven with the rental landscape within 10 years of its inception. Analyses on such a dataset would not only provide intuition about the rental metrics but also shed some light on the socio-economic setting of the city.  
 The aim of the project is to perform analyses on New York City Airbnb dataset and uncover insights about the sharing economy in one of the biggest cities of the world. The tasks involve developing business intelligence for both hosts who are listing their apartments and the guests who are using them to meet their accommodation requirements.  
@@ -101,7 +103,7 @@ data.frame(table(format(listing.df$host_since, '%Y'))) %>%
 
 Geo plot shows the landscape of Airbnb listings over the years. A quick glance at the geo plot reveals that Manhattan and North Brooklyn around the East river are the most populated areas by Airbnb listings.
 
-```{r fig.width = 9, fig.height = 6}
+```{r fig.width = 8.25, fig.height = 5.5}
 accumulate_by <- function(dat, var) {
   var <- lazyeval::f_eval(var, dat)
   lvls <- plotly:::getLevels(var)
@@ -175,7 +177,7 @@ medianpricehood.geo$text <- paste0('Neighbourhood:', medianpricehood.geo$neighbo
                                    medianpricehood.geo$median_price_per_guest)
 ```
 
-```{r fig.width = 9, fig.height = 6}
+```{r fig.width = 8.25, fig.height = 5.5}
 tm_shape(medianpricehood.geo) +
   tm_fill(col = 'median_price_per_guest', palette = 'Reds', alpha = 0.7, n = 10,
           title = 'Median Rate per Guest (in $)', id = 'text') +
@@ -224,7 +226,7 @@ Zumper has mapped NYC neighbourhood rents for winter 2019 and the graphs show th
 ### How badly the Covid-19 crisis affect Airbnb?
 ##### {.tabset .tabset-fade}
 ###### Dec 1, 2019 - Jan 1, 2020
-<img src = '../support/Calendar_MeanRate_Dec19Jan20.jpg'/>
+<img src = '../support/calendar_meanrate_dec19jan20.jpg'/>
 
 ###### May 15, 2020 - Jun 15, 2020
 
@@ -494,7 +496,7 @@ rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% 
                                     prediced_rate = round(exp(rate.linr.pred.valid), 2))
 ```
 
-Below is the user interface for hosts to input parameters for suggesting the price and 95% prediction interval at which they can register his/her listing.<br/><br/>
+Below is the user interface for hosts to input parameters for suggesting the price and 95% prediction interval at which they can register their listing.<br/><br/>
 <iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' height = 500px width = 850px />
 
 ### What are the pain points that a guest finds in Airbnb?

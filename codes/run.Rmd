@@ -85,6 +85,19 @@ ggplotly(ggplot(borough.geo.df) + geom_sf() + ggtitle('Growth of Airbnb in NYC')
             marker = list(color = 'firebrick', size = 2), hoverinfo = 'text',
             text = ~property_type, showlegend = F) %>%
   animation_slider(currentvalue = list(prefix = 'Year: ', font = list(color = 'firebrick')))
+
+# listyear.gif <- 
+#   tm_shape(borough.geo) +
+#   tm_borders(col = 'grey40', lwd = 2) + 
+#   tm_shape(st_as_sf(x = listyear.df %>% 
+#                       accumulate_by(~host_since_year), 
+#                     coords = c('longitude', 'latitude'), 
+#                     crs = proj4string(borough.geo))) +
+#   tm_dots(col = 'firebrick4', size = 0.1) +
+#   tm_facets(by = 'frame', free.coords = FALSE) +
+#   tm_layout(title = 'Growth of NYC')
+# 
+# tmap_animation(listyear.gif, filename = '../support/airbnb_growth.gif', delay = 200, width = 1000)
 ```
 
 ### How costly are the Airbnb rates in the neighbourhoods across the five boroughs?

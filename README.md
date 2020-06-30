@@ -19,7 +19,7 @@ There are three data sets that were used for the analysis, namely –
 * `reviews.csv` – file includes the reviews of each listing posted by guests.
 ## Analysis
 The complete analysis report is published on [RPubs](https://rpubs.com/phxlumens/nyc_airbnb).<br/>
-* [Predict Rate](https://phxlumens.shinyapps.io/predict_rate/): User interface for hosts to suggest them the price at which they can register his/her listing. <br/>
+* [Predict Rate](https://phxlumens.shinyapps.io/predict_rate/): User interface for hosts to suggest them the price at which they can register their listing. <br/>
 ![Predict Rate](./support/predict_rate.jpg)
 * [Recommend Listings](https://phxlumens.shinyapps.io/recommend_listings/): User interface for customers to view the top 10 suggestions.<br/>
 ![Recommend Listings](./support/recommend_listing.jpg)
