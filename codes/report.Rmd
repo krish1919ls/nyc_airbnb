@@ -1,6 +1,6 @@
 ---
 title: 'Decoding Airbnb in The Big Apple'
-author: 'Sai Krishna Lanka'
+author: 'Daksh Goyal, Nitin Kumar, Sai Krishna Lanka, Wen Luo'
 date: '6/22/2020'
 output: 
   html_document:
@@ -427,8 +427,7 @@ rate.df %>%
 ```
 
 ##### {-}
-As a result of cleaning and filtering, the records in the dataset are reduced by around 1500. The base 
-levels are:
+As a result of cleaning and filtering, the records in the dataset are reduced by around 1500. The base levels are:
 
 * Borough: Manhattan
 * Neighbourhood: Harlem

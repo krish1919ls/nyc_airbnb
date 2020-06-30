@@ -1,6 +1,6 @@
 ---
 title: 'Data Cleaning: Decoding Airbnb in The Big Apple'
-author: 'Sai Krishna Lanka'
+author: 'Daksh Goyal, Nitin Kumar, Sai Krishna Lanka, Wen Luo'
 date: '6/22/2020'
 ---
 
