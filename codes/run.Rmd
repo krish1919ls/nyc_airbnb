@@ -428,7 +428,7 @@ predict.server <- function(input, output) {
                    tm_fill(id = 'neighbourhood', col = 'darkseagreen', alpha = 0.7, n = 6) +
                    tm_borders() + 
                    tm_text(text = 'text', size = 1.5, col = 'black') +
-                   tm_layout(title = paste0('Predicted Median Rate (1-Night) for Airbnb rentals in ',
+                   tm_layout(title = paste0('Predicted Rate (1-Night) for Airbnb rentals in ',
                                             res.geo$neighbourhood)))
   })
   

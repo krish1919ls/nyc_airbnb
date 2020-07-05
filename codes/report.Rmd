@@ -12,7 +12,7 @@ output:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, 
-                      fig.width = 6, fig.height = 4, fig.align = 'center')
+                      fig.width = 8.25, fig.height = 4, fig.align = 'center')
 ```
 
 <style>body {text-align: justify}</style>
@@ -103,7 +103,7 @@ data.frame(table(format(listing.df$host_since, '%Y'))) %>%
 
 Geo plot shows the landscape of Airbnb listings over the years. A quick glance at the geo plot reveals that Manhattan and North Brooklyn around the East river are the most populated areas by Airbnb listings.
 
-```{r fig.width = 8.25, fig.height = 5.5}
+```{r fig.height = 5.5}
 accumulate_by <- function(dat, var) {
   var <- lazyeval::f_eval(var, dat)
   lvls <- plotly:::getLevels(var)
@@ -144,7 +144,8 @@ pricehood.df %>%
   plot_ly(type = 'box', y = ~round(price/guests_included, 2), color = ~neighbourhood_group_cleansed,
           colors = 'Dark2') %>% 
   layout(title = 'Boxplot: Rate per One Guest w.r.t. Borough', 
-         yaxis = list(title = 'Rate per One Guest'))
+         yaxis = list(title = 'Rate per One Guest'),
+         showlegend = FALSE)
 ```
 
 ###### Log Rate
@@ -154,7 +155,8 @@ pricehood.df %>%
   plot_ly(type = 'box', y = ~round(log(price/guests_included), 2), color = ~neighbourhood_group_cleansed,
           colors = 'Dark2') %>% 
   layout(title = 'Boxplot: Log of Rate per One Guest w.r.t. Borough', 
-         yaxis = list(title = 'Log of Rate per One Guest'))
+         yaxis = list(title = 'Log of Rate per One Guest'),
+         showlegend = FALSE)
 ```
 
 ##### {-}
@@ -177,7 +179,7 @@ medianpricehood.geo$text <- paste0('Neighbourhood:', medianpricehood.geo$neighbo
                                    medianpricehood.geo$median_price_per_guest)
 ```
 
-```{r fig.width = 8.25, fig.height = 5.5}
+```{r fig.height = 5.5}
 tm_shape(medianpricehood.geo) +
   tm_fill(col = 'median_price_per_guest', palette = 'Reds', alpha = 0.7, n = 10,
           title = 'Median Rate per Guest (in $)', id = 'text') +
@@ -544,7 +546,7 @@ words <- Corpus(VectorSource(review.df$comments), readerControl = list(language 
 For this task, reviews are tokenized, lemmatized, and void of stop words as part of data cleaning. A TF-IDF matrix is constructed on the processed reviews. An interpretation of the word cloud reveals that the word ‘host’ appears possibly hinting a disconnect between the customer and the host. ‘Reservation’ and ‘cancel’ suggest that hosts do not honour their commitment.<br/>
 A better designed word cloud with sentiment factor can give superior insights and help create guidelines for onboarding new hosts to warn them of potential do’s and don’ts.
 
-```{r}
+```{r fig.height = 5}
 set.seed(42)
 wordcloud(words = names(words), freq = words, min.freq = 1, max.words = 200,
           random.order = FALSE, rot.per = 0.35, colors = brewer.pal(8, 'Dark2'))
