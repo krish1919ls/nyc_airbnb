@@ -46,12 +46,9 @@ rate.df$neighbourhood_cleansed <- relevel(rate.df$neighbourhood_cleansed, 'Harle
 rate.df$property_type <- relevel(rate.df$property_type, 'Apartment')
 rate.df$room_type <- relevel(rate.df$room_type, 'Entire home/apt')
 
-set.seed(1)
-train.index <- sample(c(1:dim(rate.df)[1]), dim(rate.df)[1]*0.7)
-
 rate.linr <- lm(lnprice ~ neighbourhood_cleansed + property_type + room_type + bedrooms + 
                   bathrooms  + guests_included, 
-                data = rate.df, subset = train.index, na.action = na.exclude)
+                data = rate.df, na.action = na.exclude)
 
 
 ui <- fluidPage(

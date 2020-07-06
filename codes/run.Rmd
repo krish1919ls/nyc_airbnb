@@ -362,6 +362,10 @@ rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% 
 ```
 
 ```{r}
+rate.linr <- lm(lnprice ~ neighbourhood_cleansed + property_type + room_type + bedrooms + 
+                   bathrooms  + guests_included, 
+                 data = rate.df, na.action = na.exclude)
+
 predict.ui <- fluidPage(
   tags$style('body {
       -moz-transform: scale(0.8, 0.8); /* Moz-browsers */
@@ -417,7 +421,7 @@ predict.server <- function(input, output) {
                          'bedrooms' = as.integer(input$bed),
                          'bathrooms' = as.numeric(input$bath), 
                          'guests_included' = as.integer(input$guest))
-    res.pred.df <- predict(rate.linr2, newdata = res.df, na.action = na.pass, interval = 'prediction')
+    res.pred.df <- predict(rate.linr, newdata = res.df, na.action = na.pass, interval = 'prediction')
     res.pred.df <- round(exp(res.pred.df), 2)
     res.df <- cbind(res.df, res.pred.df)
     res.df$text <- paste0('Rate: $', res.df$fit, ' | Lower 2.5%: $', res.df$lwr, 
