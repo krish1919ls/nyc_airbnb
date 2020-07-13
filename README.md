@@ -3,8 +3,7 @@ The project focuses on performing analyses on New York City Airbnb and developin
 Following are the questions the project tries to answer which are split into three broad sections:
 * Insights into Airbnb
 	+ How has Airbnb presence grown over the years?
-	+ How costly are the Airbnb rates in the neighbourhoods across the five boroughs?  
-	+ Does the rental landscape paint the same picture as the real estate setting of NYC?
+	+ How costly are the Airbnb rates in the neighbourhoods across the five boroughs?
 	+ How badly the Covid-19 crisis affect Airbnb?
 * Insights for Hosts
 	+ What should be the rental value if you want to list your property with Airbnb?

@@ -133,7 +133,7 @@ server <- function(input, output) {
   output$recdf <- renderDataTable({
     datatable(recommend.geo()@data[c('neighbourhood_cleansed', 'property_type', 'room_type', 'bedrooms',
                                      'bathrooms', 'guests_included', 'price', 'listing_url')],
-              colnames = c('Neighbourhood', 'Property Type', 'Room Type', '# of Bedrooms', 
+              colnames = c('NTA', 'Property Type', 'Room Type', '# of Bedrooms', 
                            '# of Bathrooms', '# of Guests Included', 'Rate per Night', 'Listing URL'),
               escape = FALSE)
   })

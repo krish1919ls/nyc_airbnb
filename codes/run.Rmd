@@ -154,8 +154,6 @@ tm_shape(medianpricehood.geo) +
   tm_layout(title = 'NYC: Rate for 1-Night')
 ```
 
-### Does the rental landscape paint the same picture as the real estate setting of NYC?
-
 ```{r}
 medianpricehood.df %>% 
   filter(neighbourhood_group_cleansed == 'Manhattan') %>% 
@@ -191,7 +189,7 @@ calendar.df %>%
          from May 15, 2020 to Jul 15, 2020', 
          xaxis = list(title = 'Time'),
          yaxis = list(title = 'Mean Price'),
-         legend = list(orientation = 'h', xanchor = 'center', x = 0.5, y = -0.15))
+         legend = list(orientation = 'h', xanchor = 'center', x = 0.5, y = -0.2))
 
 calendar.df %>%
   mutate(price_guest = log(adjusted_price/guests_included), weekday = weekdays(date)) %>%
