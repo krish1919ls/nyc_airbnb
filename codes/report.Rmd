@@ -35,23 +35,22 @@ Following are the questions the project tries to answer which are split into thr
 	+ What are the top 10 listing recommendations based on customer constraints?
 
 ```{r load libraries and set options}
-library(tidyverse)
-library(plotly)
-library(RColorBrewer)
-library(broom)
-library(sp)
-library(rgdal)
-library(sf)
-library(tmap)
-library(forecast)
-library(gains)
-library(NLP)
-library(sylly)
-library(koRpus)
-library(koRpus.lang.en)
-library(textstem)
-library(tm)
-library(wordcloud)
+if(!require('pacman')) install.packages('pacman')
+pacman::p_load(
+  tidyverse,
+  plotly,
+  RColorBrewer,
+  broom,
+  sp,
+  rgdal,
+  sf,
+  tmap,
+  knitr,
+  forecast,
+  gains,
+  textstem,
+  tm,
+  wordcloud)
 
 theme_set(theme_classic())
 
@@ -89,7 +88,7 @@ listyear.df$longitude <- as.numeric(listyear.df$longitude)
 listyear.df$latitude <- as.numeric(listyear.df$latitude)
 ```
 
-New York City being the most densely populous city in US, has over 50,000 Airbnb listings as of May 2020. Bar plot shows that new listings in NYC increased steadily from 2008 to 2015. Post 2015 new listings started to go down and averaged around 4000 up till last year.
+New York City being the most densely populous city in US, has over 50,000 Airbnb listings as of May 2020. Bar plot shows that new listings in NYC increased steadily from 2008 to 2015. Post 2015 new listings started to go down and averaged around 5000 up till last year.
 
 ```{r}
 data.frame(table(format(listing.df$host_since, '%Y'))) %>%
@@ -210,7 +209,7 @@ knitr::kable(medianpricehood.df %>%
 **Airbnb:**
 
 ```{r}
-knitr::kable(medianpricehood.df %>% 
+kable(medianpricehood.df %>% 
   filter(neighbourhood_group_cleansed == 'Brooklyn') %>% 
   arrange(desc(median_price_per_guest)) %>% 
   top_n(5, median_price_per_guest),
@@ -458,7 +457,7 @@ One of the important factors in choosing regressors is to explain the model in a
 rate.linr1 <- lm(lnprice ~ neighbourhood_group_cleansed + property_type + room_type + bedrooms + 
                    bathrooms + guests_included, 
                  data = rate.df, subset = train.index, na.action = na.exclude)
-knitr::kable(glance(rate.linr1) %>%
+kable(glance(rate.linr1) %>%
   dplyr::select(r.squared, adj.r.squared, AIC, BIC),
  col.names = c('R-Squared', 'Adjusted R-Squared', 'AIC', 'BIC'))
 ```
@@ -470,7 +469,7 @@ Although the previous model explains the variation fairly decent, we also need t
 rate.linr2 <- lm(lnprice ~ neighbourhood_cleansed + property_type + room_type + bedrooms + 
                    bathrooms  + guests_included, 
                  data = rate.df, subset = train.index, na.action = na.exclude)
-knitr::kable(glance(rate.linr2) %>%
+kable(glance(rate.linr2) %>%
   dplyr::select(r.squared, adj.r.squared, AIC, BIC),
  col.names = c('R-Squared', 'Adjusted R-Squared', 'AIC', 'BIC'))
 ```
@@ -481,14 +480,14 @@ Performance Metrics for Training: 70% split
 
 ```{r}
 rate.linr.pred.train <- predict(rate.linr2, na.action = na.pass)
-knitr::kable(accuracy(rate.linr.pred.train, rate.df[train.index, ]$lnprice))
+kable(accuracy(rate.linr.pred.train, rate.df[train.index, ]$lnprice))
 ```
 
 Performance Metrics for Test: 30% split
 
 ```{r}
 rate.linr.pred.valid <- predict(rate.linr2, newdata = rate.df[-train.index, ], na.action = na.pass)
-knitr::kable(accuracy(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice))
+kable(accuracy(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice))
 ```
 
 Prediction:<br/>
