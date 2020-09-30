@@ -5,8 +5,8 @@ account: phxlumens
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2490118
-bundleId: 3451527
+bundleId: 3689252
 url: https://phxlumens.shinyapps.io/recommend_listings/
-when: 1596046537.83308
+when: 1601501588.79417
 asMultiple: FALSE
 asStatic: FALSE

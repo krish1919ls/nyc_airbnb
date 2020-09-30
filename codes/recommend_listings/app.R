@@ -9,13 +9,12 @@ library(tmap)
 library(leaflet)
 library(DT)
 
-
 listing.df <- read_csv('./app_data/listings_clean.csv', col_types = cols())
 
 hood.geo <- readOGR(dsn = './app_data/NTA Boundaries.geojson', verbose = FALSE)
 
-recommend.fields <- c('listing_url', 'neighbourhood_group_cleansed', 'neighbourhood_cleansed', 'latitude', 
-                      'longitude', 'property_type', 'room_type', 'bedrooms', 'bathrooms', 
+recommend.fields <- c('listing_url', 'neighbourhood_group_cleansed', 'neighbourhood_cleansed', 
+                      'latitude', 'longitude', 'property_type', 'room_type', 'bedrooms', 'bathrooms', 
                       'guests_included', 'price')
 recommend.df <- na.omit(listing.df[, recommend.fields])
 
@@ -36,10 +35,6 @@ recommend.df$price_guest <- round(recommend.df$price/recommend.df$guests_include
 
 
 ui <- fluidPage(
-  tags$style('body {
-      -moz-transform: scale(0.8, 0.8); /* Moz-browsers */
-      zoom: 0.8; /* Other non-webkit browsers */
-      zoom: 80%; /* Webkit browsers */}'),
   tags$style(HTML('table.dataTable tr.selected td, 
                   table.dataTable td.selected {background-color: #fff !important;}')),
   sidebarLayout(
@@ -54,10 +49,10 @@ ui <- fluidPage(
                   choices = seq(1, 15, 1), selected = 1),
       numericInput(inputId = 'price', label = 'Budget : ',
                    value = 50, min = 1, max = 10000),
-      width = 5
+      width = 4
     ),
     mainPanel(
-      leafletOutput(outputId= 'map', width = '100%', height = '500'), width = 7
+      leafletOutput(outputId= 'map', width = '100%', height = '500'), width = 8
     )
   ),
   dataTableOutput(outputId = 'recdf', width = '100%', height = '500')
@@ -65,7 +60,7 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
-  
+
   output$bhood <- renderUI({
     selectInput(inputId = 'hood', label = 'Neighbourhood: ', 
                 choices = recommend.df %>%
@@ -114,10 +109,7 @@ server <- function(input, output) {
     
     rownames(recommend.geo@data) <- NULL
     recommend.geo$weight <- rev(as.integer(rownames(recommend.geo@data)))
-    recommend.geo$text <- paste0('Room Type: ', recommend.geo$room_type,
-                                 ' | # Bedrooms: ', recommend.geo$bedrooms,
-                                 ' | # Guests Included: ', recommend.geo$guests_included,
-                                 ' | Price: $', recommend.geo$price)
+    recommend.geo$text <- paste0('$', recommend.geo$price, ' per Night')
     
     recommend.geo
   })
@@ -125,7 +117,12 @@ server <- function(input, output) {
   output$map <- renderLeaflet({
     tmap_leaflet(tm_shape(recommend.geo()) + 
                    tm_dots(col = 'property_type', size = 'weight', alpha = 0.9, palette = 'Dark2', 
-                           title = 'Property Type', id = 'text') + 
+                           title = 'Property Type', id = 'text',
+                           popup.vars=c('NTA:' = 'neighbourhood_cleansed',
+                                        'Room Type:' = 'room_type', 
+                                        '# Bedrooms:' = 'bedrooms',
+                                        '# Bathrooms:' = 'bathrooms',
+                                        '# Guests:' = 'guests_included')) + 
                    tm_basemap('Esri.WorldTopoMap') + 
                    tm_layout(title = 'Recommended Airbnb Listings'))
   })

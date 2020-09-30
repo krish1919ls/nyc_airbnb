@@ -50,7 +50,8 @@ pacman::p_load(
   gains,
   textstem,
   tm,
-  wordcloud)
+  wordcloud
+)
 
 theme_set(theme_classic())
 
@@ -100,25 +101,7 @@ data.frame(table(format(listing.df$host_since, '%Y'))) %>%
 ```
 
 Geo plot shows the landscape of Airbnb listings over the years. A quick glance at the geo plot reveals that Manhattan and North Brooklyn around the East river are the most populated areas by Airbnb listings.
-
-```{r fig.height = 5.5}
-accumulate_by <- function(dat, var) {
-  var <- lazyeval::f_eval(var, dat)
-  lvls <- plotly:::getLevels(var)
-  dats <- lapply(seq_along(lvls), function(x) {
-    cbind(dat[var %in% lvls[seq(1, x)], ], frame = lvls[[x]])
-  })
-  dplyr::bind_rows(dats)
-}
-
-ggplotly(ggplot(borough.geo.df) + geom_sf() + ggtitle('Growth of Airbnb in NYC') +
-           theme(plot.title = element_text(hjust = 0.5))) %>%
-  add_trace(type = 'scatter', mode = 'markers', y = ~latitude, x = ~longitude, frame = ~frame,
-            data = listyear.df %>% accumulate_by(~host_since_year),
-            marker = list(color = 'firebrick', size = 2), hoverinfo = 'text',
-            text = ~property_type, showlegend = F) %>%
-  animation_slider(currentvalue = list(prefix = 'Year: ', font = list(color = 'firebrick')))
-```
+<center><img src = '../support/airbnb_growth.gif' width = '550' height = '500'/></center>
 
 ### How costly are the Airbnb rates in the neighbourhoods across the five boroughs?
 
@@ -226,9 +209,6 @@ Zumper has mapped NYC neighbourhood rents for winter 2019. and the maps show med
     
 ### How badly the Covid-19 crisis affect Airbnb?
 ##### {.tabset .tabset-fade}
-###### Dec 1, 2019 - Jan 1, 2020
-<img src = '../support/calendar_meanrate_dec19jan20.jpg'/>
-
 ###### May 15, 2020 - Jun 15, 2020
 
 ```{r}
@@ -247,8 +227,12 @@ calendar.df %>%
          from May 15, 2020 to Jun 15, 2020', 
          xaxis = list(title = 'Time'),
          yaxis = list(title = 'Mean Price'),
-         legend = list(orientation = 'h', xanchor = 'center', x = 0.5, y = -0.2))
+         legend = list(orientation = 'h', xanchor = 'center', x = 0.5, y = -0.2),
+         hovermode = 'compare')
 ```
+
+###### Dec 1, 2019 - Jan 1, 2020
+<img src = '../support/calendar_meanrate_dec19jan20.jpg'/>
 
 ##### {-}
 From the graphs one can grasp contrasting scenarios. As of September 12, 2019, an average person had to shell out extra 13-17% on accommodation during New Years’ Week – booking almost three months in advance. Fast forward 5 months to May 06, 2020, the situation has changed dramatically. What was considered to be a peak summer season for Airbnb Rentals, the projections have changed for the worst. Covid-19 has halted most of the economic functions and recreational activities and isolation has become a new norm. Travel and hospitality industries are the worst affected due to this. As of May 06, 2020, the hosts have reduced the rents by more than 20% of what was charged during New Year’s Week – that too with immediate availability.
@@ -500,7 +484,7 @@ rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% 
 
 Below is the user interface for hosts to input parameters for suggesting the price and 95% prediction interval at which they can register their listing.<br/>
 **Note:** If blank frame -> Right click -> Reload frame. Else [click here](https://phxlumens.shinyapps.io/predict_rate/){target="_blank"}.<br/><br/>
-<iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' width = '100%' height = '500'/>
+<iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' width = '100%' height = '620'/>
 
 ### What are the pain points that a guest finds in Airbnb?
 It is imperative for hosts to understand the customer expectations. Since most of Airbnb hosts are a part of informal sector in hospitality industry, it is important for them to provide service which is on par with those of formal sector. Reviews provide a feedback to the hosts on how the stay was and what can be improved, if necessary. Text analytics on the reviews of listings with poor ratings (i.e., ratings less than 50%) would provide crucial insights about bad customer experience.<br/>
@@ -558,7 +542,7 @@ As a customer, one would like to get recommendations for their given budget and 
 To proceed with this analysis, top 100 locations are selected which are in close proximity to the neighbourhood centres that the user has selected. Then they are ranked according to the Euclidean distances calculated on the three scaled parameters, namely – # of bedrooms, # of guests included and rate of the listing per day. Standardization is done to make sure that the data is internally consistent i.e., each variable has equal dominating effect in recommending the output. Caution is observed while using the rate variable. Euclidean distances are calculated on the log-transformed rate that are per single guest i.e., entire rate is divided with number of guests that were included in the listing record and then it is log-transformed. Top 10 records are then recommended to the customer.<br/>
 Below is the user interface for the customer to choose parameters and to see the suggestions graphically on a map. The larger the size of the bubble, the better the match. The populated dataset contains the detailed information about the recommended listings with decreasing order of priority.<br/>
 **Note:** If blank frame -> Right click -> Reload frame. Else [click here](https://phxlumens.shinyapps.io/recommend_listings/){target="_blank"}.<br/><br/>
-<iframe src = 'https://phxlumens.shinyapps.io/recommend_listings/' width = '100%' height = '970'/>
+<iframe src = 'https://phxlumens.shinyapps.io/recommend_listings/' width = '105%' height = '1250'/>
 
 ## Conclusion
 The massive dataset has a lot of insights to offer. What has been presented in this report is tip of an iceberg. The dataset provided key insights into how Airbnb grew in New York City, especially in the boroughs of Manhattan and Brooklyn. The rental landscape painted the same picture as the real estate setting of New York. Insights into various listing attributes led to the development of a multilevel linear regression model that help hosts to list their new properties for a suitable price range. Text analytics on the reviews of low rated listings has suggested that customers hate when the hosts do not honour their commitment and cancel reservations. For customers, top 10 Airbnb rental recommendations were suggested based on their constraints. However, during these testing times the hospitality sector is badly hit. For hosts who occasionally rent out their spare room in the style of a real bed & breakfast, the lost Airbnb income due the Covid-19 is a frustration.  

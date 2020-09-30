@@ -28,7 +28,8 @@ pacman::p_load(
   wordcloud,
   reshape2,
   rgeos,
-  DT)
+  DT
+)
 
 theme_set(theme_classic())
 
@@ -48,7 +49,8 @@ hood.geo <- readOGR(dsn = '../data/NTA Boundaries.geojson', verbose = FALSE)
 ### How has Airbnb presence grown over the years?
 
 ```{r}
-listyear.fields <- c('host_since', 'neighbourhood_group_cleansed','property_type','longitude', 'latitude')
+listyear.fields <- c('host_since', 'neighbourhood_group_cleansed', 
+                     'property_type', 'longitude',  'latitude')
 listyear.df <- na.omit(listing.df[, listyear.fields])
 
 listyear.df$host_since_year <- format(listyear.df$host_since, '%Y')
@@ -76,26 +78,26 @@ accumulate_by <- function(dat, var) {
   dplyr::bind_rows(dats)
 }
 
-ggplotly(ggplot(borough.geo.df) + geom_sf() + ggtitle('Growth of Airbnb in NYC') +
-           theme(plot.title = element_text(hjust = 0.5))) %>%
-  add_trace(type = 'scatter', mode = 'markers', y = ~latitude, x = ~longitude, frame = ~frame,
-            data = listyear.df %>% accumulate_by(~host_since_year),
-            marker = list(color = 'firebrick', size = 2), hoverinfo = 'text',
-            text = ~property_type, showlegend = F) %>%
-  animation_slider(currentvalue = list(prefix = 'Year: ', font = list(color = 'firebrick')))
+# ggplotly(ggplot(borough.geo.df) + geom_sf() + ggtitle('Growth of Airbnb in NYC') +
+#            theme(plot.title = element_text(hjust = 0.5))) %>%
+#   add_trace(type = 'scatter', mode = 'markers', y = ~latitude, x = ~longitude, frame = ~frame,
+#             data = listyear.df %>% accumulate_by(~host_since_year),
+#             marker = list(color = 'firebrick', size = 2), hoverinfo = 'text',
+#             text = ~property_type, showlegend = F) %>%
+#   animation_slider(currentvalue = list(prefix = 'Year: ', font = list(color = 'firebrick')))
 
-# listyear.gif <- 
-#   tm_shape(borough.geo) +
-#   tm_borders(col = 'grey40', lwd = 2) + 
-#   tm_shape(st_as_sf(x = listyear.df %>% 
-#                       accumulate_by(~host_since_year), 
-#                     coords = c('longitude', 'latitude'), 
-#                     crs = proj4string(borough.geo))) +
-#   tm_dots(col = 'firebrick4', size = 0.1) +
-#   tm_facets(by = 'frame', free.coords = FALSE) +
-#   tm_layout(title = 'Growth of NYC')
-# 
-# tmap_animation(listyear.gif, filename = '../support/airbnb_growth.gif', delay = 200, width = 1000)
+listyear.gif <-
+  tm_shape(st_as_sf(x = listyear.df %>%
+                      accumulate_by(~host_since_year),
+                    coords = c('longitude', 'latitude'),
+                    crs = proj4string(borough.geo))) +
+  tm_dots(col = 'firebrick4', size = 0.01) +
+  tm_facets(along = 'frame', free.coords = FALSE) +
+  tm_shape(borough.geo) +
+  tm_borders(col = 'grey20', lwd = 1) +
+  tm_layout(title = 'Growth of Airbnb\nin NYC')
+
+tmap_animation(listyear.gif, filename = '../support/airbnb_growth.gif', delay = 200, width = 1000)
 ```
 
 ### How costly are the Airbnb rates in the neighbourhoods across the five boroughs?
@@ -187,7 +189,8 @@ calendar.df %>%
          from May 15, 2020 to Jul 15, 2020', 
          xaxis = list(title = 'Time'),
          yaxis = list(title = 'Mean Price'),
-         legend = list(orientation = 'h', xanchor = 'center', x = 0.5, y = -0.2))
+         legend = list(orientation = 'h', xanchor = 'center', x = 0.5, y = -0.2),
+         hovermode = 'compare')
 
 calendar.df %>%
   mutate(price_guest = log(adjusted_price/guests_included), weekday = weekdays(date)) %>%
@@ -363,10 +366,6 @@ rate.linr <- lm(lnprice ~ neighbourhood_cleansed + property_type + room_type + b
                  data = rate.df, na.action = na.exclude)
 
 predict.ui <- fluidPage(
-  tags$style('body {
-      -moz-transform: scale(0.8, 0.8); /* Moz-browsers */
-      zoom: 0.8; /* Other non-webkit browsers */
-      zoom: 80%; /* Webkit browsers */}'),
   sidebarLayout(
     sidebarPanel(
       selectInput(inputId = 'borough', label = 'Borough: ',
@@ -424,12 +423,13 @@ predict.server <- function(input, output) {
                           ' | Upper 97.5%: $' , res.df$upr)
     res.geo <- hood.geo[hood.geo$neighbourhood == input$hood, ]
     res.geo <- merge(res.geo, res.df, by.x = 'neighbourhood', by.y = 'neighbourhood_cleansed')
-    tmap_leaflet(tm_shape(res.geo) +
+    t <- tm_shape(res.geo) +
                    tm_fill(id = 'neighbourhood', col = 'darkseagreen', alpha = 0.7, n = 6) +
                    tm_borders() + 
-                   tm_text(text = 'text', size = 1.5, col = 'black') +
+                   tm_text(text = 'text', size = 1.2, col = 'black') +
                    tm_layout(title = paste0('Predicted Rate (1-Night) for Airbnb rentals in ',
-                                            res.geo$neighbourhood)))
+                                            res.geo$neighbourhood))
+    tmap_leaflet(t)
   })
   
 }
@@ -508,10 +508,6 @@ recommend.df$price_guest <- round(recommend.df$price/recommend.df$guests_include
 
 ```{r}
 recommend.ui <- fluidPage(
-  tags$style('body {
-      -moz-transform: scale(0.8, 0.8); /* Moz-browsers */
-      zoom: 0.8; /* Other non-webkit browsers */
-      zoom: 80%; /* Webkit browsers */}'),
   tags$style(HTML('table.dataTable tr.selected td, 
                   table.dataTable td.selected {background-color: #fff !important;}')),
   sidebarLayout(
@@ -587,10 +583,7 @@ recommend.server <- function(input, output) {
     
     rownames(recommend.geo@data) <- NULL
     recommend.geo$weight <- rev(as.integer(rownames(recommend.geo@data)))
-    recommend.geo$text <- paste0('Room Type: ', recommend.geo$room_type,
-                                 ' | # Bedrooms: ', recommend.geo$bedrooms,
-                                 ' | # Guests Included: ', recommend.geo$guests_included,
-                                 ' | Price: $', recommend.geo$price)
+    recommend.geo$text <- paste0('$', recommend.geo$price, ' per Night')
     
     recommend.geo
   })
@@ -598,7 +591,12 @@ recommend.server <- function(input, output) {
   output$map <- renderLeaflet({
     tmap_leaflet(tm_shape(recommend.geo()) + 
                    tm_dots(col = 'property_type', size = 'weight', alpha = 0.9, palette = 'Dark2', 
-                           title = 'Property Type', id = 'text') + 
+                           title = 'Property Type', id = 'text',
+                           popup.vars=c('NTA:' = 'neighbourhood_cleansed',
+                                        'Room Type:' = 'room_type', 
+                                        '# Bedrooms:' = 'bedrooms',
+                                        '# Bathrooms:' = 'bathrooms',
+                                        '# Guests:' = 'guests_included')) +
                    tm_basemap('Esri.WorldTopoMap') + 
                    tm_layout(title = 'Recommended Airbnb Listings'))
   })

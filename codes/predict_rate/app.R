@@ -52,10 +52,6 @@ rate.linr <- lm(lnprice ~ neighbourhood_cleansed + property_type + room_type + b
 
 
 ui <- fluidPage(
-  tags$style('body {
-      -moz-transform: scale(0.8, 0.8); /* Moz-browsers */
-      zoom: 0.8; /* Other non-webkit browsers */
-      zoom: 80%; /* Webkit browsers */}'),
   sidebarLayout(
     sidebarPanel(
       selectInput(inputId = 'borough', label = 'Borough: ',
@@ -116,7 +112,7 @@ server <- function(input, output) {
     tmap_leaflet(tm_shape(res.geo) +
                    tm_fill(id = 'neighbourhood', col = 'darkseagreen', alpha = 0.7, n = 6) +
                    tm_borders() + 
-                   tm_text(text = 'text', size = 1.5, col = 'black') +
+                   tm_text(text = 'text', size = 1.2, col = 'black') +
                    tm_layout(title = paste0('Predicted Rate (1-Night) for Airbnb rentals in ',
                                             res.geo$neighbourhood)))
   })
@@ -124,4 +120,4 @@ server <- function(input, output) {
 }
 
 
-shinyApp(ui = ui, server = server, options = list(height = 650))
+shinyApp(ui = ui, server = server, options = list(height = 600))
