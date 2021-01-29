@@ -44,9 +44,6 @@ listing.df$review_scores_rating <- as.numeric(gsub('[^0-9.]', '',
 write_csv(listing.df, '../data/listings_clean.csv', na = 'NA', append = FALSE, col_names = TRUE,
           quote_escape = 'double')
 
-write_csv(listing.df, './predict_rate/app_data/listings_clean.csv', na = 'NA', append = FALSE, 
-          col_names = TRUE, quote_escape = 'double')
-
 write_csv(listing.df, './recommend_listings/app_data/listings_clean.csv', na = 'NA', append = FALSE, 
           col_names = TRUE, quote_escape = 'double')
 ```
@@ -79,4 +76,39 @@ review.df <- review.df %>%
 
 write_csv(review.df, '../data/reviews_clean.csv', na = 'NA', append = FALSE, col_names = TRUE,
           quote_escape = 'double')
+```
+
+```{r rates dataframe}
+rate.fields <- c('neighbourhood_group_cleansed', 'neighbourhood_cleansed', 'property_type', 
+                 'room_type', 'bedrooms', 'bathrooms', 'guests_included', 'price')
+rate.df <- na.omit(listing.df[, rate.fields])
+
+rate.df <- rate.df[!apply(rate.df[, c('price')], 1, function(x) any(x == 0)), ]
+
+rate.df$lnprice <- log(rate.df$price)
+
+lnprice.lq <- quantile(rate.df$lnprice, probs = 0.25)
+lnprice.uq <- quantile(rate.df$lnprice, probs = 0.75)
+lnprice.iqr <- 1.5 * (lnprice.uq - lnprice.lq)
+rate.df <- rate.df[between(rate.df$lnprice, lnprice.lq - lnprice.iqr, lnprice.uq + lnprice.iqr), ]
+
+rate.df <- rate.df[rate.df$neighbourhood_cleansed %in% 
+                     names(which(table(rate.df$neighbourhood_cleansed) >= 5)), ]
+rate.df$neighbourhood_cleansed <- as.factor(as.character(rate.df$neighbourhood_cleansed))
+
+rate.df <- rate.df[rate.df$property_type %in% 
+                     names(which(table(rate.df$property_type) >= 100)), ]
+rate.df$property_type <- as.factor(as.character(rate.df$property_type))
+
+rate.df$neighbourhood_group_cleansed <- relevel(rate.df$neighbourhood_group_cleansed, 'Manhattan')
+rate.df$neighbourhood_cleansed <- relevel(rate.df$neighbourhood_cleansed, 'Harlem')
+rate.df$property_type <- relevel(rate.df$property_type, 'Apartment')
+rate.df$room_type <- relevel(rate.df$room_type, 'Entire home/apt')
+
+write_csv(rate.df, '../data/rates_clean.csv', na = 'NA', append = FALSE, 
+          col_names = TRUE, quote_escape = 'double')
+
+write_csv(rate.df, './predict_rate/app_data/rates_clean.csv', na = 'NA', append = FALSE, 
+          col_names = TRUE, quote_escape = 'double')
+
 ```

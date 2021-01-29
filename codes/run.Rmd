@@ -19,7 +19,7 @@ pacman::p_load(
   rgdal,
   sf,
   tmap,
-  forecast,
+  caret,
   gains,
   shiny,
   leaflet,
@@ -350,11 +350,23 @@ formula(rate.linr4)
 
 ```{r}
 rate.linr.pred.train <- predict(rate.linr2, na.action = na.pass)
-accuracy(rate.linr.pred.train, rate.df[train.index, ]$lnprice)
+data.frame(
+  RMSE = RMSE(rate.linr.pred.train, rate.df[train.index, ]$lnprice),
+  MAE = MAE(rate.linr.pred.train, rate.df[train.index, ]$lnprice),
+  R2 = R2(rate.linr.pred.train, rate.df[train.index, ]$lnprice)
+)
+```
 
+```{r}
 rate.linr.pred.valid <- predict(rate.linr2, newdata = rate.df[-train.index, ], na.action = na.pass)
-accuracy(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice)
+data.frame(
+  RMSE = RMSE(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice),
+  MAE = MAE(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice),
+  R2 = R2(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice)
+)
+```
 
+```{r}
 rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% c('price', 'lnprice'))], 
                                     actual_rate = rate.df[-train.index, ]$price, 
                                     prediced_rate = round(exp(rate.linr.pred.valid), 2))

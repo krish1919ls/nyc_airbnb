@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
 
 <style>body {text-align: justify}</style>
 
-[Github Repo](https://github.com/krish1919ls/nyc_airbnb){target="_blank"}
+[GitHub Repo](https://github.com/krish1919ls/nyc_airbnb){target="_blank"}
 
 ## Introduction
 Airbnb has been one of the most successful companies since its inception in 2008. According to Airbnb Newsrooms, currently Airbnb has more than 7 million listings in more than 191 countries and regions and operating in more than 100,000 cities. As one of the most popular cities in the world, New York City has been one of the hottest markets for Airbnb. With close to 50,000 listings in the city, Airbnb has interwoven with the rental landscape within 10 years of its inception. Analyses on such a dataset would not only provide intuition about the rental metrics but also shed some light on the socio-economic setting of the city.  
@@ -46,7 +46,7 @@ pacman::p_load(
   sf,
   tmap,
   knitr,
-  forecast,
+  caret,
   gains,
   textstem,
   tm,
@@ -435,7 +435,7 @@ train.index <- sample(c(1:dim(rate.df)[1]), dim(rate.df)[1]*0.7)
 <br/>
 
 #### Regression Results
-One of the important factors in choosing regressors is to explain the model in a simpler way. Running a multilevel linear regression on the dataset with boroughs results in adjusted R2 of 56.55%.
+One of the important factors in choosing regressors is to explain the model in a simpler way. Running a multilevel linear regression on the dataset with boroughs results in adjusted R-Squared of 56.55%.
 
 ```{r}
 rate.linr1 <- lm(lnprice ~ neighbourhood_group_cleansed + property_type + room_type + bedrooms + 
@@ -447,7 +447,7 @@ kable(glance(rate.linr1) %>%
 ```
 
 The signs of the coefficients on boroughs, room types, # of bedrooms, # of bathrooms and # of guests are as expected and are significant. Except for guest suite and house, the coefficients of other property types are positive and significant.<br/>
-Although the previous model explains the variation fairly decent, we also need to see whether there is any significant improvement in model fit if neighbourhood effects are considered over borough effects. By including neighbourhood effects, the adjusted R2 increased to 62.84%. Similarly, AIC and BIC values have also reduced. The signs and magnitudes of the coefficients on boroughs, room types, # of bedrooms and # of bathrooms remain almost same. Coefficients for guest suite and townhouse are similar to that of apartment.
+Although the previous model explains the variation fairly decent, we also need to see whether there is any significant improvement in model fit if neighbourhood effects are considered over borough effects. By including neighbourhood effects, the adjusted R-Squared increased to 62.84%. Similarly, AIC and BIC values have also reduced. The signs and magnitudes of the coefficients on boroughs, room types, # of bedrooms and # of bathrooms remain almost same. Coefficients for guest suite and townhouse are similar to that of apartment.
 
 ```{r}
 rate.linr2 <- lm(lnprice ~ neighbourhood_cleansed + property_type + room_type + bedrooms + 
@@ -458,20 +458,24 @@ kable(glance(rate.linr2) %>%
  col.names = c('R-Squared', 'Adjusted R-Squared', 'AIC', 'BIC'))
 ```
 
-Both Forward and Backward Selection have chosen the model with neighbourhood effects as the best and hence this full model is chosen for prediction. Even with a low R-squared, statistically significant p-values continue to identify relationships and coefficients have the same interpretation.<br/>
+Both Forward and Backward Selection have chosen the model with neighbourhood effects as the best and hence this full model is chosen for prediction. Even with a low R-Squared, statistically significant p-values continue to identify relationships and coefficients have the same interpretation.<br/>
 
 Performance Metrics for Training: 70% split
 
 ```{r}
 rate.linr.pred.train <- predict(rate.linr2, na.action = na.pass)
-kable(accuracy(rate.linr.pred.train, rate.df[train.index, ]$lnprice))
+kable(data.frame(RMSE = RMSE(rate.linr.pred.train, rate.df[train.index, ]$lnprice),
+                 MAE = MAE(rate.linr.pred.train, rate.df[train.index, ]$lnprice),
+                 R2 = R2(rate.linr.pred.train, rate.df[train.index, ]$lnprice)))
 ```
 
 Performance Metrics for Test: 30% split
 
 ```{r}
 rate.linr.pred.valid <- predict(rate.linr2, newdata = rate.df[-train.index, ], na.action = na.pass)
-kable(accuracy(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice))
+kable(data.frame(RMSE = RMSE(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice),
+                 MAE = MAE(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice),
+                 R2 = R2(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice)))
 ```
 
 Prediction:<br/>
@@ -484,7 +488,29 @@ rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% 
 
 Below is the user interface for hosts to input parameters for suggesting the price and 95% prediction interval at which they can register their listing.<br/>
 **Note:** If blank frame -> Right click -> Reload frame. Else [click here](https://phxlumens.shinyapps.io/predict_rate/){target="_blank"}.<br/><br/>
-<iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' width = '100%' height = '620'/>
+<iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' width = '100%' height = '620'/><br/><br/>
+
+#### Best Explainable Model
+The parameters chosen in the linear regression are run on 1) Tree-based models like Decision Tree, Random Forest, AdaBoosted Decision Tree, and XGBoost (Gradient Boosting Framework) and 2) Neural Network model to predict the logarithm of price variable. Grid Search is done to choose the hyper-parameters that lead to the best model with lower RMSE (or greater negative RMSE) on 5-fold Cross Validation Set. The training set of 70% is used to fit the model and test of 30% is utilized to evaluate the performance of the model. The following tables contain the information regarding best hyper-parameters of the model and its performance metrics on test set such as RMSE, MAE and R-Squared.
+
+##### {.tabset .tabset-fade}
+###### Tree-based Models
+| Model | Hyper-Parameters | Negative CV RMSE | Test RMSE | Test MAE | Test R-Squared |
+|-|-|:-:|:-:|:-:|:-:|
+| Decision Tree | max_depth=15, min_samples_leaf=8 | -0.3947 | 0.3905 | 0.2981 | 0.6268 |
+| Random Forest | n_estimators=100 | -0.3959  | 0.3866  | 0.2914 | 0.6343 |
+| AdaBoosted Decision Tree | n_estimators=50 , learning_rate=0.1 | -0.4412 | 0.4400 | 0.3424 | 0.5262 |
+| XGBoost (GBM Framework) | objective=reg:squarederror, learning_rate=0.1, n_estimators=100, max_depth=5, min_child_weight=1, gamma=0, subsample=0.8, colsample_bytree=0.8, scale_pos_weight=1 | - | 0.3806 | 0.2896 | 0.6455 |<br/>
+Refer [Jupyter Notebook](https://github.com/krish1919ls/nyc_airbnb/blob/master/codes/prediction_models/tree_based.ipynb/){target="_blank"}.
+
+###### Neural Network Model
+| Hyper-Parameters | Test RMSE | Test MAE | Test R-Squared |
+|-|:-:|:-:|:-:|
+| batch_size=100, epochs=10<br>**Hidden Layer 1:**<br>neurons=10, kernel_initializer=normal, activation=ReLU<br>**Hidden Layer 2:**<br>neurons=5, kernel_initializer=normal, activation=ReLU<br>**Output Layer:**<br>neurons=1, kernel_initializer=normal, activation=ReLU<br>**Compiler:**<br>optimizer=Adam(learning_rate=0.1), loss=MeanSquaredError, metrics=MeanSquaredError | 0.3890 | 0.2969 | 0.6327 |<br/>
+Refer [Jupyter Notebook](https://github.com/krish1919ls/nyc_airbnb/blob/master/codes/prediction_models/nn.ipynb/){target="_blank"}.
+
+##### {-}
+All the models performed similar to that of linear regression on the test set. XGBoost with a tree-based booster has the best test metric. However, XGBoost model did not significantly perform better than the multilevel linear regression model. In terms of explainability and interpretability, linear regression pips tree-based and neural network models. Linear model’s Test R-Squared is similar to Train R-Squared suggesting the generalization of model. Therefore, linear regression model is chosen as the final model to predict listing rates.
 
 ### What are the pain points that a guest finds in Airbnb?
 It is imperative for hosts to understand the customer expectations. Since most of Airbnb hosts are a part of informal sector in hospitality industry, it is important for them to provide service which is on par with those of formal sector. Reviews provide a feedback to the hosts on how the stay was and what can be improved, if necessary. Text analytics on the reviews of listings with poor ratings (i.e., ratings less than 50%) would provide crucial insights about bad customer experience.<br/>
@@ -552,4 +578,4 @@ The massive dataset has a lot of insights to offer. What has been presented in t
 * [About Us](https://press.airbnb.com/en-us/about-us/){target="_blank"}
 * [Airbnb Rental Listings Dataset Mining](https://towardsdatascience.com/airbnb-rental-listings-dataset-mining-f972ed08ddec){target="_blank"}
 * [Mapped: New York City Neighborhood Rent Prices (Winter 2019)](https://www.zumper.com/blog/2019/01/mapped-new-york-city-neighborhood-rent-prices-winter-2019/){target="_blank"}
-* [Visualizing Geospatial Data in R](https://www.datacamp.com/courses/working-with-geospatial-data-in-r){target="_blank"}
+* [Visualizing Geospatial Data in R](https://www.datacamp.com/courses/working-with-geospatial-data-in-r/){target="_blank"}

@@ -7,13 +7,12 @@ library(tmap)
 library(leaflet)
 
 
-listing.df <- read_csv('./app_data/listings_clean.csv', col_types = cols())
+rate.df <- read_csv('./app_data/rates_clean.csv', col_types = cols())
 
 hood.geo <- readOGR(dsn = './app_data/NTA Boundaries.geojson', verbose = FALSE)
 
 rate.fields <- c('neighbourhood_group_cleansed', 'neighbourhood_cleansed', 'property_type', 'room_type', 
-                 'bedrooms', 'bathrooms', 'guests_included', 'price')
-rate.df <- na.omit(listing.df[, rate.fields])
+                 'bedrooms', 'bathrooms', 'guests_included', 'lnprice')
 
 rate.df$neighbourhood_group_cleansed <- as.factor(rate.df$neighbourhood_group_cleansed)
 rate.df$neighbourhood_cleansed <- as.factor(rate.df$neighbourhood_cleansed)
@@ -23,23 +22,6 @@ rate.df$bedrooms <- as.integer(rate.df$bedrooms)
 rate.df$bathrooms <- as.numeric(rate.df$bathrooms)
 rate.df$guests_included <- as.integer(rate.df$guests_included)
 rate.df$price <- as.numeric(rate.df$price)
-
-rate.df <- rate.df[!apply(rate.df[, c('price')], 1, function(x) any(x == 0)), ]
-
-rate.df$lnprice <- log(rate.df$price)
-
-lnprice.lq <- quantile(rate.df$lnprice, probs = 0.25)
-lnprice.uq <- quantile(rate.df$lnprice, probs = 0.75)
-lnprice.iqr <- 1.5 * (lnprice.uq - lnprice.lq)
-rate.df <- rate.df[between(rate.df$lnprice, lnprice.lq - lnprice.iqr, lnprice.uq + lnprice.iqr), ]
-
-rate.df <- rate.df[rate.df$neighbourhood_cleansed %in% 
-                     names(which(table(rate.df$neighbourhood_cleansed) >= 5)), ]
-rate.df$neighbourhood_cleansed <- as.factor(as.character(rate.df$neighbourhood_cleansed))
-
-rate.df <- rate.df[rate.df$property_type %in% 
-                     names(which(table(rate.df$property_type) >= 100)), ]
-rate.df$property_type <- as.factor(as.character(rate.df$property_type))
 
 rate.df$neighbourhood_group_cleansed <- relevel(rate.df$neighbourhood_group_cleansed, 'Manhattan')
 rate.df$neighbourhood_cleansed <- relevel(rate.df$neighbourhood_cleansed, 'Harlem')
