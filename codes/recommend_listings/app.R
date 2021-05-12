@@ -19,8 +19,6 @@ recommend.fields <- c('listing_url', 'neighbourhood_group_cleansed', 'neighbourh
 recommend.df <- na.omit(listing.df[, recommend.fields])
 
 recommend.df$listing_url <- as.character(recommend.df$listing_url)
-recommend.df$listing_url <- paste0('<a target = "_blank", href="', recommend.df$listing_url, '">', 
-                                   recommend.df$listing_url, '</a>')
 recommend.df$neighbourhood_cleansed <- as.factor(recommend.df$neighbourhood_cleansed)
 recommend.df$neighbourhood_group_cleansed <- as.factor(recommend.df$neighbourhood_group_cleansed)
 recommend.df$latitude <- as.numeric(recommend.df$latitude)
@@ -32,6 +30,8 @@ recommend.df$bathrooms <- as.numeric(recommend.df$bathrooms)
 recommend.df$guests_included <- as.integer(gsub('[^0-9.]', '', as.character(recommend.df$guests_included)))
 recommend.df$price <- as.numeric(gsub('[^0-9.]', '', as.character(recommend.df$price)))
 recommend.df$price_guest <- round(recommend.df$price/recommend.df$guests_included, 2)
+recommend.df$listing_url <- paste0('<a target = "_blank", href="', recommend.df$listing_url, '">', 
+                                   recommend.df$price, '</a>')
 
 
 ui <- fluidPage(
@@ -129,9 +129,9 @@ server <- function(input, output) {
   
   output$recdf <- renderDataTable({
     datatable(recommend.geo()@data[c('neighbourhood_cleansed', 'property_type', 'room_type', 'bedrooms',
-                                     'bathrooms', 'guests_included', 'price', 'listing_url')],
+                                     'bathrooms', 'guests_included', 'listing_url')],
               colnames = c('NTA', 'Property Type', 'Room Type', '# of Bedrooms', 
-                           '# of Bathrooms', '# of Guests Included', 'Rate per Night', 'Listing URL'),
+                           '# of Bathrooms', '# of Guests Included', 'Price'),
               escape = FALSE)
   })
 }

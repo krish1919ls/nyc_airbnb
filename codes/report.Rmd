@@ -1,5 +1,5 @@
 ---
-title: 'Decoding Airbnb in The Big Apple'
+title: 'Decoding Airbnb in NYC'
 author: 'Daksh Goyal, Nitin Kumar, Sai Krishna Lanka, Wen Luo'
 date: '6/22/2020'
 output: 
@@ -20,8 +20,10 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
 [GitHub Repo](https://github.com/krish1919ls/nyc_airbnb){target="_blank"}
 
 ## Introduction
-Airbnb has been one of the most successful companies since its inception in 2008. According to Airbnb Newsrooms, currently Airbnb has more than 7 million listings in more than 191 countries and regions and operating in more than 100,000 cities. As one of the most popular cities in the world, New York City has been one of the hottest markets for Airbnb. With close to 50,000 listings in the city, Airbnb has interwoven with the rental landscape within 10 years of its inception. Analyses on such a dataset would not only provide intuition about the rental metrics but also shed some light on the socio-economic setting of the city.  
-The aim of the project is to perform analyses on New York City Airbnb dataset and uncover insights about the sharing economy in one of the biggest cities of the world. The tasks involve developing business intelligence for both hosts who are listing their apartments and the guests who are using them to meet their accommodation requirements.  
+Airbnb has been one of the most successful companies since its inception in 2008. According to Airbnb Newsrooms, currently there are more than 7 million listings in more than 191 countries and regions and operating in more than 100,000 cities. As one of the most popular cities in the world, New York City has been one of the hottest markets for Airbnb. With close to 50,000 listings in the city, Airbnb has interwoven with the rental landscape within 10 years of its inception. Analyses on such a dataset would not only provide intuition about the rental metrics but also shed some light on the socio-economic setting of the city.
+
+The aim of the project is to perform analyses on New York City Airbnb dataset and uncover insights into the sharing economy in one of the biggest cities of the world. The tasks involve developing business intelligence for both hosts who are listing their apartments and the guests who are using them to meet their accommodation requirements.
+
 Following are the questions the project tries to answer which are split into three broad sections:
 
 * Insights into Airbnb
@@ -60,9 +62,9 @@ tmap_mode('view')
 
 ## Data Description
 The second-hand dataset is taken from Inside Airbnb which provides non-commercial set of tools and data that allows us to explore how Airbnb is really being used in cities around the world. The New York Airbnb dataset is compiled on 6 May 2020. 
-There are three data sets that we used for our analysis, namely –
+There are three datasets that we used for our analysis, namely –
 
-* `listings.csv` – file contains 106 variables and 50,246 listing information. Details about the listings such as price, apartment details, ratings of the apartment, number of rooms, neighbourhood and host information are included in this file. 
+* `listings.csv` – file contains 106 variables and 50,246 listing information. Details about the listings such as price, apartment details, ratings of the apartment, number of rooms, neighbourhood and host information are included in this file.
 * `calendar.csv` – file includes the daily rates of the listings up till a year. The data in the file was used to project the prices during the holiday season. 
 * `reviews.csv` – file includes the reviews of each listing posted by guests. This file was primarily used for text analytics.
 
@@ -89,7 +91,7 @@ listyear.df$longitude <- as.numeric(listyear.df$longitude)
 listyear.df$latitude <- as.numeric(listyear.df$latitude)
 ```
 
-New York City being the most densely populous city in US, has over 50,000 Airbnb listings as of May 2020. Bar plot shows that new listings in NYC increased steadily from 2008 to 2015. Post 2015 new listings started to go down and averaged around 5000 up till last year.
+Being the most densely populous city in U.S., New York City has over 50,000 Airbnb listings as of May 2020. Bar plot shows that new listings in NYC increased steadily from 2008 to 2015. Post 2015 new listings started to go down and averaged around 4,000 up until last year.
 
 ```{r}
 data.frame(table(format(listing.df$host_since, '%Y'))) %>%
@@ -115,20 +117,9 @@ pricehood.df$price <- as.numeric(pricehood.df$price)
 pricehood.df$guests_included <- as.integer(pricehood.df$guests_included)
 ```
 
-Since Airbnb rates are not necessarily per individual basis, it makes logical sense to standardize the rates with respect to an individual. Also, entities involving price or income generally tend to be right skewed (outliers on the higher end), median is considered to be the best measure of central tendency. To capture the data well, the logarithm of listing price per single guest is taken. The box plots with respect to the five boroughs in NYC illustrate the intuition. Coinciding with the reasoning of high cost of living in Manhattan, the Airbnb rates are similar to the expectations.  
+Since Airbnb rates are not necessarily per individual basis, it makes logical sense to standardize the rates with respect to an individual. Furthermore, entities involving price or income generally tend to be right skewed (outliers on the higher end). Hence, median is considered to be the best measure of central tendency. To capture the data well, the logarithm of listing price per single guest is taken. The box plots with respect to the five boroughs in NYC illustrate the intuition. Coinciding with the reasoning of high cost of living in Manhattan, the Airbnb rates are similar to the expectations.
 
 ##### {.tabset .tabset-fade}
-###### Rate
-
-```{r}
-pricehood.df %>% 
-  plot_ly(type = 'box', y = ~round(price/guests_included, 2), color = ~neighbourhood_group_cleansed,
-          colors = 'Dark2') %>% 
-  layout(title = 'Boxplot: Rate per One Guest w.r.t. Borough', 
-         yaxis = list(title = 'Rate per One Guest'),
-         showlegend = FALSE)
-```
-
 ###### Log Rate
 
 ```{r}
@@ -140,8 +131,19 @@ pricehood.df %>%
          showlegend = FALSE)
 ```
 
+###### Rate
+
+```{r}
+pricehood.df %>% 
+  plot_ly(type = 'box', y = ~round(price/guests_included, 2), color = ~neighbourhood_group_cleansed,
+          colors = 'Dark2') %>% 
+  layout(title = 'Boxplot: Rate per One Guest w.r.t. Borough', 
+         yaxis = list(title = 'Rate per One Guest'),
+         showlegend = FALSE)
+```
+
 ##### {-}
-To visualize in depth pricing analysis of neighbourhoods in each borough, a heatmap of prices with respect to the neighbourhoods having minimum of 5 listings is plotted. This provides crucial insights on the median price range of neighbourhoods. The grey area in the heat map shows neighbourhood with less than 5 listings. Most of the neighbourhoods in Staten Island have less than 5 listings probably due to its suburb nature. The region around East River including North Brooklyn and the entire Manhattan are the costliest places to rent an Airbnb in addition to the most number of listings in the region.
+To visualize in depth pricing analysis of neighbourhoods in each borough, a heatmap of prices with respect to the neighbourhoods having minimum of 5 listings is plotted. This provides crucial insights on the median price range of neighbourhoods. The grey area in the heat map shows neighbourhood with less than 5 listings. Most of the neighbourhoods in Staten Island have less than 5 listings probably due to its suburb nature. The region around East River including North Brooklyn and the entire Manhattan are the costliest places to rent an Airbnb in addition to the greatest number of listings in the region.
 
 ```{r}
 medianpricehood.df <- pricehood.df %>% 
@@ -185,7 +187,7 @@ knitr::kable(medianpricehood.df %>%
 
 **Zumper:**
 <center>
-<img src = '../support/Manhattan_MonthlyPriceMedianMap_Winter2019.png' width = '400' height = '1000'/>
+<img src = '../support/Manhattan_MonthlyPriceMedianMap_Winter2019.png' width = '400' height = '800'/>
 </center>
 
 ###### Costly neighbourhoods in Brooklyn with median rate
@@ -201,11 +203,11 @@ kable(medianpricehood.df %>%
 
 **Zumper:**
 <center>
-<img src = '../support/Brooklyn_MonthlyPriceMedianMap_Winter2019.png' width = '400' height = '560'/>
+<img src = '../support/Brooklyn_MonthlyPriceMedianMap_Winter2019.png' width = '400' height = '520'/>
 </center>
 
 ##### {-}
-Zumper has mapped NYC neighbourhood rents for winter 2019. and the maps show median 1-bedroom rents in Brooklyn and Manhattan. Places like Dumbo, Vinegar Hill, Brooklyn Heights, Downtown Brooklyn, and Fort Greene are costlier neighbourhoods. Similarly places like Tribeca, Battery Park, Soho, West Village, and Chelsea in Manhattan are costlier in Manhattan. This presents the real estate setting for the New York boroughs. These places form New York Skyline and is a hub for intercultural and financial activities. Both Zumper (real estate setting) and Airbnb (rental landscape) paint the same picture.
+Zumper has mapped NYC neighbourhood rents for winter 2019, and the maps show median 1-bedroom rents in Brooklyn and Manhattan. Places like Dumbo, Vinegar Hill, Brooklyn Heights, Downtown Brooklyn, and Fort Greene are costlier neighbourhoods in Brooklyn. Similarly places like Tribeca, Battery Park, Soho, West Village, and Chelsea are costlier in Manhattan. This presents the real estate setting for the New York boroughs. These places form New York Skyline and is a hub for intercultural and financial activities. Both Zumper (real estate setting) and Airbnb (rental landscape) paint the same picture.
     
 ### How badly the Covid-19 crisis affect Airbnb?
 ##### {.tabset .tabset-fade}
@@ -235,23 +237,24 @@ calendar.df %>%
 <img src = '../support/calendar_meanrate_dec19jan20.jpg'/>
 
 ##### {-}
-From the graphs one can grasp contrasting scenarios. As of September 12, 2019, an average person had to shell out extra 13-17% on accommodation during New Years’ Week – booking almost three months in advance. Fast forward 5 months to May 06, 2020, the situation has changed dramatically. What was considered to be a peak summer season for Airbnb Rentals, the projections have changed for the worst. Covid-19 has halted most of the economic functions and recreational activities and isolation has become a new norm. Travel and hospitality industries are the worst affected due to this. As of May 06, 2020, the hosts have reduced the rents by more than 20% of what was charged during New Year’s Week – that too with immediate availability.
+From the graphs, one can grasp contrasting scenarios. As of September 12, 2019, an average person had to shell out extra 13-17% on accommodation during New Years’ Week – booking almost three months in advance. Fast forward 5 months to May 06, 2020, the situation has changed dramatically. What was considered to be a peak summer season for Airbnb Rentals, the projections have changed for the worst. Covid-19 has halted most of the economic functions and recreational activities and isolation has become a new norm. Travel and hospitality industries are the worst affected due to this. As of May 06, 2020, the hosts have reduced the rents by more than 20% of what was charged during New Year’s Week – that too with immediate availability.
     
 ### What should be the rental value if you want to list your property with Airbnb?
-As a new host, one would like to how much his/her property can be listed with Airbnb. The analysis gives a crucial information for new hosts to estimate their listing price based on certain attributes.<br/>
+As a new host, one would like to know how much his/her property can be listed with Airbnb. The analysis gives a crucial information for new hosts to estimate their listing price based on certain attributes.
+
 The parameters chosen are of:
 
 * Geographical importance: 
-    + borough
-    + neighbourhood
+    + Borough
+    + Neighbourhood
 * Listing attributes: 
-    + property type 
-    + room type
-    + number of bedrooms
-    + number of bathrooms
-    + number of guests included
+    + Property Type 
+    + Room Type
+    + Number of Bedrooms
+    + Number of Bathrooms
+    + Number of Guests included
 
-Since many of the parameters are categorical variables such as borough name, neighbourhood name, property type, and room type, we proceed with multilevel linear regression model to predict the price.<br/>
+Since many of the parameters are categorical variables such as borough name, neighbourhood name, property type, and room type, we proceed with multilevel linear regression model to predict the price.
 
 ```{r}
 rate.fields <- c('neighbourhood_group_cleansed', 'neighbourhood_cleansed', 'property_type', 'room_type', 
@@ -279,29 +282,12 @@ Before fitting a linear model, a careful examination of dependent variable and e
 * Property Type: >= 100 listings
 
 ##### {.tabset .tabset-fade}
-###### Rate
-
-```{r}
-rate.df %>% 
-  plot_ly(type = 'histogram', x = ~price) %>%
-  layout(title = 'Histogram: Rate per 1-Night', 
-         xaxis = list(title = 'Rate (in $)'), yaxis = list(title = '# of Listings'))
-```
-
-###### Log Rate
-
-```{r}
-rate.df$lnprice <- log(rate.df$price)
-
-rate.df %>% 
-  plot_ly(type = 'histogram', x = ~lnprice, nbinsx = 50) %>%
-  layout(title = 'Histogram: Log of Rate per 1-Night', 
-         xaxis = list(title = 'Log of Rate'), yaxis = list(title = '# of Listings'))
-```
-
 ###### Log Rate without Outliers
 
 ```{r}
+rate.df$lnprice <- log(rate.df$price)
+rate.temp.df = rate.df
+
 lnprice.lq <- quantile(rate.df$lnprice, probs = 0.25)
 lnprice.uq <- quantile(rate.df$lnprice, probs = 0.75)
 lnprice.iqr <- 1.5 * (lnprice.uq - lnprice.lq)
@@ -323,9 +309,27 @@ rate.df %>%
          xaxis = list(title = 'Log of Rate'), yaxis = list(title = '# of Listings'))
 ```
 
+###### Log Rate
+
+```{r}
+rate.temp.df %>% 
+  plot_ly(type = 'histogram', x = ~lnprice, nbinsx = 50) %>%
+  layout(title = 'Histogram: Log of Rate per 1-Night', 
+         xaxis = list(title = 'Log of Rate'), yaxis = list(title = '# of Listings'))
+```
+
+###### Rate
+
+```{r}
+rate.temp.df %>% 
+  plot_ly(type = 'histogram', x = ~price) %>%
+  layout(title = 'Histogram: Rate per 1-Night', 
+         xaxis = list(title = 'Rate (in $)'), yaxis = list(title = '# of Listings'))
+```
+
 ##### {-}
 
-As seen earlier, the median rates for various boroughs are different and their effects need to be considered. Similarly, neighbourhoods in each of the boroughs differ in terms of median rate per one guest per one night as shown. Although the rates in various neighbourhoods in each borough vary identically around their averages, but it is important to see whether the neighbourhood effects are stronger than the borough effects.
+As seen earlier, the median rates for various boroughs are different and their effects need to be considered. Similarly, neighbourhoods in each of the boroughs differ in terms of median rate per guest per night as shown. Although the rates in various neighbourhoods in each borough vary identically around their averages, but it is important to see whether the neighbourhood effects are stronger than the borough effects.
 
 ##### {.tabset .tabset-fade}
 ###### Manhattan
@@ -446,7 +450,8 @@ kable(glance(rate.linr1) %>%
  col.names = c('R-Squared', 'Adjusted R-Squared', 'AIC', 'BIC'))
 ```
 
-The signs of the coefficients on boroughs, room types, # of bedrooms, # of bathrooms and # of guests are as expected and are significant. Except for guest suite and house, the coefficients of other property types are positive and significant.<br/>
+The signs of the coefficients on boroughs, room types, # of bedrooms, # of bathrooms and # of guests are as expected and are significant. Except for guest suite and house, the coefficients of other property types are positive and significant.
+
 Although the previous model explains the variation fairly decent, we also need to see whether there is any significant improvement in model fit if neighbourhood effects are considered over borough effects. By including neighbourhood effects, the adjusted R-Squared increased to 62.84%. Similarly, AIC and BIC values have also reduced. The signs and magnitudes of the coefficients on boroughs, room types, # of bedrooms and # of bathrooms remain almost same. Coefficients for guest suite and townhouse are similar to that of apartment.
 
 ```{r}
@@ -458,7 +463,7 @@ kable(glance(rate.linr2) %>%
  col.names = c('R-Squared', 'Adjusted R-Squared', 'AIC', 'BIC'))
 ```
 
-Both Forward and Backward Selection have chosen the model with neighbourhood effects as the best and hence this full model is chosen for prediction. Even with a low R-Squared, statistically significant p-values continue to identify relationships and coefficients have the same interpretation.<br/>
+Both Forward and Backward Selection have chosen the model with neighbourhood effects as the best and hence this full model is chosen for prediction. Even with a low R-Squared, statistically significant p-values continue to identify relationships and coefficients have the same interpretation.
 
 Performance Metrics for Training: 70% split
 
@@ -478,7 +483,7 @@ kable(data.frame(RMSE = RMSE(rate.linr.pred.valid, rate.df[-train.index, ]$lnpri
                  R2 = R2(rate.linr.pred.valid, rate.df[-train.index, ]$lnprice)))
 ```
 
-Prediction:<br/>
+Prediction:
 
 ```{r}
 rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% c('price', 'lnprice'))], 
@@ -486,12 +491,13 @@ rate.predict.valid.df <- data.frame(rate.df[-train.index, !(names(rate.df) %in% 
                                     prediced_rate = round(exp(rate.linr.pred.valid), 2))
 ```
 
-Below is the user interface for hosts to input parameters for suggesting the price and 95% prediction interval at which they can register their listing.<br/>
+Below is the user interface for hosts to input parameters for suggesting the price and 95% prediction interval at which they can register their listing.
+
 **Note:** If blank frame -> Right click -> Reload frame. Else [click here](https://phxlumens.shinyapps.io/predict_rate/){target="_blank"}.<br/><br/>
-<iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' width = '100%' height = '620'/><br/><br/>
+<iframe src = 'https://phxlumens.shinyapps.io/predict_rate/' width = '100%' height = '625' data-external='1'/><br/><br/>
 
 #### Best Explainable Model
-The parameters chosen in the linear regression are run on 1) Tree-based models like Decision Tree, Random Forest, AdaBoosted Decision Tree, and XGBoost (Gradient Boosting Framework) and 2) Neural Network model to predict the logarithm of price variable. Grid Search is done to choose the hyper-parameters that lead to the best model with lower RMSE (or greater negative RMSE) on 5-fold Cross Validation Set. The training set of 70% is used to fit the model and test of 30% is utilized to evaluate the performance of the model. The following tables contain the information regarding best hyper-parameters of the model and its performance metrics on test set such as RMSE, MAE and R-Squared.
+The regressors chosen in the linear regression are also used in Machine Learning models like 1) Tree-based models like Decision Tree, Random Forest, AdaBoosted Decision Tree, and XGBoost (Gradient Boosting Framework) and 2) Neural Network model to predict the logarithm of price variable. Grid Search is used to choose the hyper-parameters that lead to the best model with lower RMSE (or greater negative RMSE) on 5-fold Cross Validation Set. The training set of 70% is used to fit the model and test set of 30% is utilized to evaluate the performance of the model. The following tables contain the information regarding best hyper-parameters of the model and its performance metrics on test set such as RMSE, MAE and R-Squared.
 
 ##### {.tabset .tabset-fade}
 ###### Tree-based Models
@@ -513,7 +519,8 @@ Refer [Jupyter Notebook](https://github.com/krish1919ls/nyc_airbnb/blob/master/c
 All the models performed similar to that of linear regression on the test set. XGBoost with a tree-based booster has the best test metric. However, XGBoost model did not significantly perform better than the multilevel linear regression model. In terms of explainability and interpretability, linear regression pips tree-based and neural network models. Linear model’s Test R-Squared is similar to Train R-Squared suggesting the generalization of model. Therefore, linear regression model is chosen as the final model to predict listing rates.
 
 ### What are the pain points that a guest finds in Airbnb?
-It is imperative for hosts to understand the customer expectations. Since most of Airbnb hosts are a part of informal sector in hospitality industry, it is important for them to provide service which is on par with those of formal sector. Reviews provide a feedback to the hosts on how the stay was and what can be improved, if necessary. Text analytics on the reviews of listings with poor ratings (i.e., ratings less than 50%) would provide crucial insights about bad customer experience.<br/>
+It is imperative for hosts to understand the customer expectations. Since most of Airbnb hosts are a part of informal sector in hospitality industry, it is important for them to provide service which is on par with those of formal sector. Reviews provide a feedback to the hosts on how the stay was and what can be improved, if necessary. Text analytics on the reviews of listings with poor ratings (i.e., ratings less than 50%) would provide crucial insights about bad customer experience.
+
 The bar plot shows that customers tend to give high ratings because people generally like to say good things. But bad rating means that there are some major issues with the Airbnb rental. Around 300 listings have net ratings less than 50%.
 
 ```{r}
@@ -554,7 +561,8 @@ words <- Corpus(VectorSource(review.df$comments), readerControl = list(language 
   sort(decreasing = TRUE)
 ```
 
-For this task, reviews are tokenized, lemmatized, and void of stop words as part of data cleaning. A TF-IDF matrix is constructed on the processed reviews. An interpretation of the word cloud reveals that the word ‘host’ appears possibly hinting a disconnect between the customer and the host. ‘Reservation’ and ‘cancel’ suggest that hosts do not honour their commitment.<br/>
+For this task, reviews are tokenized, lemmatized, and void of stop words as part of data cleaning. A TF-IDF matrix is constructed on the processed reviews. An interpretation of the word cloud reveals that the word ‘host’ appears possibly hinting a disconnect between the customer and the host. ‘Reservation’ and ‘cancel’ suggest that hosts do not honor their commitment.
+
 A better designed word cloud with sentiment factor can give superior insights and help create guidelines for onboarding new hosts to warn them of potential do’s and don’ts.
 
 ```{r}
@@ -564,14 +572,17 @@ wordcloud(words = names(words), freq = words, min.freq = 1, max.words = 200,
 ```
 
 ### What are the top 10 listing recommendations based on customer constraints?
-As a customer, one would like to get recommendations for their given budget and other constraints such as number of bedrooms and number of guests included.<br/>
-To proceed with this analysis, top 100 locations are selected which are in close proximity to the neighbourhood centres that the user has selected. Then they are ranked according to the Euclidean distances calculated on the three scaled parameters, namely – # of bedrooms, # of guests included and rate of the listing per day. Standardization is done to make sure that the data is internally consistent i.e., each variable has equal dominating effect in recommending the output. Caution is observed while using the rate variable. Euclidean distances are calculated on the log-transformed rate that are per single guest i.e., entire rate is divided with number of guests that were included in the listing record and then it is log-transformed. Top 10 records are then recommended to the customer.<br/>
-Below is the user interface for the customer to choose parameters and to see the suggestions graphically on a map. The larger the size of the bubble, the better the match. The populated dataset contains the detailed information about the recommended listings with decreasing order of priority.<br/>
+As a customer, one would like to get recommendations for their given budget and other constraints such as number of bedrooms and number of guests included.
+
+To proceed with this analysis, top 100 locations are selected which are in close proximity to the neighbourhood centers that the user has selected. Then they are ranked according to the Euclidean distances calculated on the three scaled parameters, namely – # of bedrooms, # of guests included and rate of the listing per day. Standardization is done to make sure that the data is internally consistent i.e., each variable has equal dominating effect in recommending the output. Caution is observed while using the rate variable. Euclidean distances are calculated on the log-transformed rate that are per single guest i.e., entire rate is divided with number of guests that were included in the listing record and then it is log-transformed. Top 10 records are then recommended to the customer.
+
+Below is the user interface for the customer to choose parameters and to see the suggestions graphically on a map. Larger the size of the bubble, better is the match. The populated dataset contains the detailed information about the recommended listings with decreasing order of priority.
+
 **Note:** If blank frame -> Right click -> Reload frame. Else [click here](https://phxlumens.shinyapps.io/recommend_listings/){target="_blank"}.<br/><br/>
-<iframe src = 'https://phxlumens.shinyapps.io/recommend_listings/' width = '105%' height = '1250'/>
+<iframe src = 'https://phxlumens.shinyapps.io/recommend_listings/' width = '105%' height = '1010' data-external='1'/>
 
 ## Conclusion
-The massive dataset has a lot of insights to offer. What has been presented in this report is tip of an iceberg. The dataset provided key insights into how Airbnb grew in New York City, especially in the boroughs of Manhattan and Brooklyn. The rental landscape painted the same picture as the real estate setting of New York. Insights into various listing attributes led to the development of a multilevel linear regression model that help hosts to list their new properties for a suitable price range. Text analytics on the reviews of low rated listings has suggested that customers hate when the hosts do not honour their commitment and cancel reservations. For customers, top 10 Airbnb rental recommendations were suggested based on their constraints. However, during these testing times the hospitality sector is badly hit. For hosts who occasionally rent out their spare room in the style of a real bed & breakfast, the lost Airbnb income due the Covid-19 is a frustration.  
+The massive dataset has a lot of insights to offer. What has been presented in this report is tip of an iceberg. The dataset provided key insights into how Airbnb grew in New York City, especially in the boroughs of Manhattan and Brooklyn. The rental landscape painted the same picture as the real estate setting of New York. Insights into various listing attributes led to the development of a multilevel linear regression model that help hosts to list their new properties for a suitable price range. Text analytics on the reviews of low rated listings has suggested that customers hate when the hosts do not honor their commitment and cancel reservations. For customers, top 10 Airbnb rental recommendations were suggested based on their constraints. However, during these testing times the hospitality sector is badly hit. For hosts who occasionally rent out their spare room in the style of a real bed & breakfast, the lost Airbnb income due the Covid-19 is a frustration.  
 
 ## References
 * [Get the Data](http://insideairbnb.com/get-the-data.html){target="_blank"}
