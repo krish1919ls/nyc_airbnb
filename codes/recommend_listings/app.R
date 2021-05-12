@@ -36,7 +36,8 @@ recommend.df$listing_url <- paste0('<a target = "_blank", href="', recommend.df$
 
 ui <- fluidPage(
   tags$style(HTML('table.dataTable tr.selected td, 
-                  table.dataTable td.selected {background-color: #fff !important;}')),
+                  table.dataTable td.selected {background-color: #fff !important;},
+                  .nowrap {white-space: nowrap;}')),
   sidebarLayout(
     sidebarPanel(
       selectInput(inputId = 'borough', label = 'Borough: ',
@@ -130,8 +131,8 @@ server <- function(input, output) {
   output$recdf <- renderDataTable({
     datatable(recommend.geo()@data[c('neighbourhood_cleansed', 'property_type', 'room_type', 'bedrooms',
                                      'bathrooms', 'guests_included', 'listing_url')],
-              colnames = c('NTA', 'Property Type', 'Room Type', '# of Bedrooms', 
-                           '# of Bathrooms', '# of Guests Included', 'Price'),
+              colnames = c('Neighbourhood', 'Property-Type', 'Room-Type', '# of Bedrooms', 
+                           '# of Bathrooms', '# of Guests', 'Price'),
               escape = FALSE)
   })
 }
