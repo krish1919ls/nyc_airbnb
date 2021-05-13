@@ -79,7 +79,7 @@ hood.geo <- readOGR(dsn = '../data/NTA Boundaries.geojson', verbose = FALSE)
 ```
 
 ## Analysis
-### How has Airbnb presence grown over the years?
+### Airbnb: How has Airbnb presence grown over the years?
 
 ```{r}
 listyear.fields <- c('host_since', 'neighbourhood_group_cleansed','property_type','longitude', 'latitude')
@@ -105,7 +105,7 @@ data.frame(table(format(listing.df$host_since, '%Y'))) %>%
 Geo plot shows the landscape of Airbnb listings over the years. A quick glance at the geo plot reveals that Manhattan and North Brooklyn around the East river are the most populated areas by Airbnb listings.
 <center><img src = '../support/airbnb_growth.gif' width = '550' height = '500'/></center>
 
-### How costly are the Airbnb rates in the neighbourhoods across the five boroughs?
+### Airbnb: How costly are the Airbnb rates in the neighbourhoods across the five boroughs?
 
 ```{r}
 pricehood.fields <- c('neighbourhood_cleansed', 'neighbourhood_group_cleansed', 'price', 'guests_included')
@@ -143,7 +143,7 @@ pricehood.df %>%
 ```
 
 ##### {-}
-To visualize in depth pricing analysis of neighbourhoods in each borough, a heatmap of prices with respect to the neighbourhoods having minimum of 5 listings is plotted. This provides crucial insights on the median price range of neighbourhoods. The grey area in the heat map shows neighbourhood with less than 5 listings. Most of the neighbourhoods in Staten Island have less than 5 listings probably due to its suburb nature. The region around East River including North Brooklyn and the entire Manhattan are the costliest places to rent an Airbnb in addition to the greatest number of listings in the region.
+To visualize in depth pricing analysis of neighbourhoods in each borough, a heatmap of prices with respect to the neighbourhoods having minimum of 5 listings is plotted. This provides crucial insights on the median price range of neighbourhoods. The grey area in the heat map shows neighbourhoods with less than 5 listings. Most of the neighbourhoods in Staten Island have less than 5 listings probably due to its suburb nature. The region around East River including North Brooklyn and the entire Manhattan are the costliest places to rent an Airbnb in addition to the greatest number of listings in the region.
 
 ```{r}
 medianpricehood.df <- pricehood.df %>% 
@@ -209,7 +209,7 @@ kable(medianpricehood.df %>%
 ##### {-}
 Zumper has mapped NYC neighbourhood rents for winter 2019, and the maps show median 1-bedroom rents in Brooklyn and Manhattan. Places like Dumbo, Vinegar Hill, Brooklyn Heights, Downtown Brooklyn, and Fort Greene are costlier neighbourhoods in Brooklyn. Similarly places like Tribeca, Battery Park, Soho, West Village, and Chelsea are costlier in Manhattan. This presents the real estate setting for the New York boroughs. These places form New York Skyline and is a hub for intercultural and financial activities. Both Zumper (real estate setting) and Airbnb (rental landscape) paint the same picture.
     
-### How badly the Covid-19 crisis affect Airbnb?
+### Airbnb: How badly the Covid-19 crisis affect Airbnb?
 ##### {.tabset .tabset-fade}
 ###### May 15, 2020 - Jun 15, 2020
 
@@ -239,7 +239,7 @@ calendar.df %>%
 ##### {-}
 From the graphs, one can grasp contrasting scenarios. As of September 12, 2019, an average person had to shell out extra 13-17% on accommodation during New Years’ Week – booking almost three months in advance. Fast forward 5 months to May 06, 2020, the situation has changed dramatically. What was considered to be a peak summer season for Airbnb Rentals, the projections have changed for the worst. Covid-19 has halted most of the economic functions and recreational activities and isolation has become a new norm. Travel and hospitality industries are the worst affected due to this. As of May 06, 2020, the hosts have reduced the rents by more than 20% of what was charged during New Year’s Week – that too with immediate availability.
     
-### What should be the rental value if you want to list your property with Airbnb?
+### Hosts: What should be the rental value if you want to list your property with Airbnb?
 As a new host, one would like to know how much his/her property can be listed with Airbnb. The analysis gives a crucial information for new hosts to estimate their listing price based on certain attributes.
 
 The parameters chosen are of:
@@ -329,7 +329,7 @@ rate.temp.df %>%
 
 ##### {-}
 
-As seen earlier, the median rates for various boroughs are different and their effects need to be considered. Similarly, neighbourhoods in each of the boroughs differ in terms of median rate per guest per night as shown. Although the rates in various neighbourhoods in each borough vary identically around their averages, but it is important to see whether the neighbourhood effects are stronger than the borough effects.
+As seen earlier, the median rates for various boroughs are different and, hence, their individual effects need to be considered. Similarly, neighbourhoods in each of the boroughs differ in terms of median rate per guest per night as shown. Although the rates in various neighbourhoods vary identically around their borough averages, it is important to see whether the neighbourhood effects are stronger than the borough effects.
 
 ##### {.tabset .tabset-fade}
 ###### Manhattan
@@ -394,7 +394,7 @@ rate.df %>%
 
 ##### {-}
 
-Around 80% of all the properties listed with Airbnb are apartments, aligning to the company’s main idea of lodgings and homestays. Hotels and Serviced Apartments tend to be costlier, adhering to the general notion. Airbnb also provides private and shared rooms for cheaper accommodation options with shared rooms only accounting for 2% of all the registered listings.
+Around 80% of all the properties listed with Airbnb are apartments, aligning to the company’s main idea of lodgings and homestays. Hotels and serviced apartments tend to be costlier, adhering to the general notion. Airbnb also provides private and shared rooms for cheaper accommodation options with shared rooms only accounting for 2% of all the registered listings.
 
 ##### {.tabset .tabset-fade}
 ###### Property Type
@@ -463,7 +463,7 @@ kable(glance(rate.linr2) %>%
  col.names = c('R-Squared', 'Adjusted R-Squared', 'AIC', 'BIC'))
 ```
 
-Both Forward and Backward Selection have chosen the model with neighbourhood effects as the best and hence this full model is chosen for prediction. Even with a low R-Squared, statistically significant p-values continue to identify relationships and coefficients have the same interpretation.
+Both Forward and Backward Selection have chosen the model with neighbourhood effects as the best and, hence, this full model is chosen for prediction. Even with a low R-Squared, statistically significant p-values continue to identify relationships and coefficients have the same interpretation.
 
 Performance Metrics for Training: 70% split
 
@@ -518,7 +518,7 @@ Refer [Jupyter Notebook](https://github.com/krish1919ls/nyc_airbnb/blob/master/c
 ##### {-}
 All the models performed similar to that of linear regression on the test set. XGBoost with a tree-based booster has the best test metric. However, XGBoost model did not significantly perform better than the multilevel linear regression model. In terms of explainability and interpretability, linear regression pips tree-based and neural network models. Linear model’s Test R-Squared is similar to Train R-Squared suggesting the generalization of model. Therefore, linear regression model is chosen as the final model to predict listing rates.
 
-### What are the pain points that a guest finds in Airbnb?
+### Hosts: What are the pain points that a guest finds in Airbnb?
 It is imperative for hosts to understand the customer expectations. Since most of Airbnb hosts are a part of informal sector in hospitality industry, it is important for them to provide service which is on par with those of formal sector. Reviews provide a feedback to the hosts on how the stay was and what can be improved, if necessary. Text analytics on the reviews of listings with poor ratings (i.e., ratings less than 50%) would provide crucial insights about bad customer experience.
 
 The bar plot shows that customers tend to give high ratings because people generally like to say good things. But bad rating means that there are some major issues with the Airbnb rental. Around 300 listings have net ratings less than 50%.
@@ -561,7 +561,7 @@ words <- Corpus(VectorSource(review.df$comments), readerControl = list(language 
   sort(decreasing = TRUE)
 ```
 
-For this task, reviews are tokenized, lemmatized, and void of stop words as part of data cleaning. A TF-IDF matrix is constructed on the processed reviews. An interpretation of the word cloud reveals that the word ‘host’ appears possibly hinting a disconnect between the customer and the host. ‘Reservation’ and ‘cancel’ suggest that hosts do not honor their commitment.
+For this task, reviews are tokenized, lemmatized, and void of stop words as part of data cleaning. A TF-IDF matrix is constructed on the processed reviews. An interpretation of the word cloud reveals that the word ‘host’ appears possibly hinting a disconnect between the customer and the host.
 
 A better designed word cloud with sentiment factor can give superior insights and help create guidelines for onboarding new hosts to warn them of potential do’s and don’ts.
 
@@ -571,7 +571,7 @@ wordcloud(words = names(words), freq = words, min.freq = 1, max.words = 200,
           random.order = FALSE, rot.per = 0.35, colors = brewer.pal(8, 'Dark2'))
 ```
 
-### What are the top 10 listing recommendations based on customer constraints?
+### Customers: What are the top 10 listing recommendations based on customer constraints?
 As a customer, one would like to get recommendations for their given budget and other constraints such as number of bedrooms and number of guests included.
 
 To proceed with this analysis, top 100 locations are selected which are in close proximity to the neighbourhood centers that the user has selected. Then they are ranked according to the Euclidean distances calculated on the three scaled parameters, namely – # of bedrooms, # of guests included and rate of the listing per day. Standardization is done to make sure that the data is internally consistent i.e., each variable has equal dominating effect in recommending the output. Caution is observed while using the rate variable. Euclidean distances are calculated on the log-transformed rate that are per single guest i.e., entire rate is divided with number of guests that were included in the listing record and then it is log-transformed. Top 10 records are then recommended to the customer.
